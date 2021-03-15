@@ -7,7 +7,7 @@
 ;;
 ;; Copyright (c) 2020 UXBOX Labs SL
 
-(ns app.main.ui.workspace.shapes.interactions
+(ns app.main.ui.workspace.viewport.interactions
   "Visually show shape interactions in workspace"
   (:require
    [app.common.geom.point :as gpt]
@@ -31,9 +31,7 @@
   [event {:keys [id type] :as shape} selected]
   (do
     (dom/stop-propagation event)
-    (when-not (empty? selected)
-      (st/emit! (dw/deselect-all)))
-    (st/emit! (dw/select-shape id))
+    (st/emit! (dw/select-shape- id))
     (st/emit! (dw/start-create-interaction))))
 
 

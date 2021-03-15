@@ -36,8 +36,11 @@
    [app.util.debug :refer [debug?]]
    [beicon.core :as rx]
    [okulary.core :as l]
-   [rumext.alpha :as mf]))
+   [rumext.alpha :as mf]
+   [app.common.uuid :as uuid]
+   ))
 
+(declare shape-wrapper)
 (declare group-wrapper)
 (declare svg-raw-wrapper)
 (declare frame-wrapper)
@@ -54,28 +57,46 @@
                               (contains? (:selected local) id)))]
       (l/derived check-moving refs/workspace-local))))
 
+(mf/defc root-shape
+  "Draws the root shape of the viewport and recursively all the shapes"
+  {::mf/wrap-props false}
+  [props]
+  (let [objects     (obj/get props "objects")
+        root-shapes (get-in objects [uuid/zero :shapes])
+        shapes      (->> root-shapes (mapv #(get objects %)))]
+
+    (for [item shapes]
+      (if (= (:type item) :frame)
+        [:& frame-wrapper {:shape item
+                           :key (:id item)
+                           :objects objects}]
+
+        [:& shape-wrapper {:shape item
+                           :key (:id item)}]))))
+
 (mf/defc shape-wrapper
   {::mf/wrap [#(mf/memo' % (mf/check-props ["shape" "frame"]))]
    ::mf/wrap-props false}
   [props]
   (let [shape  (obj/get props "shape")
         frame  (obj/get props "frame")
-        ghost? (mf/use-ctx muc/ghost-ctx)
+        ;;ghost? (mf/use-ctx muc/ghost-ctx)
         shape  (-> (geom/transform-shape shape)
                    (geom/translate-to-frame frame))
         opts  #js {:shape shape
                    :frame frame}
 
-        moving-iref (mf/use-memo (mf/deps (:id shape)) (make-is-moving-ref (:id shape)))
-        moving?     (mf/deref moving-iref)
+        ;; moving-iref (mf/use-memo (mf/deps (:id shape)) (make-is-moving-ref (:id shape)))
+        ;; moving?     (mf/deref moving-iref)
         svg-element? (and (= (:type shape) :svg-raw)
                           (not= :svg (get-in shape [:content :tag])))
-        hide-moving? (and (not ghost?) moving?)]
+        ;;hide-moving? (and (not ghost?) moving?)
+        ]
 
     (when (and shape (not (:hidden shape)))
       [:*
        (if-not svg-element?
-         [:g.shape-wrapper {:style {:display (when hide-moving? "none")}}
+         [:g.shape-wrapper #_{:style {:display (when hide-moving? "none")}}
           (case (:type shape)
             :path [:> path/path-wrapper opts]
             :text [:> text/text-wrapper opts]

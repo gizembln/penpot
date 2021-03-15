@@ -7,7 +7,7 @@
 ;;
 ;; Copyright (c) 2020 UXBOX Labs SL
 
-(ns app.main.ui.workspace.selection
+(ns app.main.ui.workspace.viewport.selection
   "Selection handlers component."
   (:require
    [app.common.geom.matrix :as gmt]
@@ -244,16 +244,15 @@
         disable-handlers (obj/get props "disable-handlers")
         current-transform (mf/deref refs/current-transform)
 
-        hide? (mf/use-state false)
+        ;; hide? (mf/use-state false)
         selrect (-> (:selrect shape)
                     minimum-selrect)
         transform (geom/transform-matrix shape {:no-flip true})]
 
-    (hooks/use-stream ms/keyboard-ctrl #(when (= type :group) (reset! hide? %)))
+    #_(hooks/use-stream ms/keyboard-ctrl #(when (= type :group) (reset! hide? %)))
 
     (when (not (#{:move :rotate} current-transform))
-      [:g.controls {:style {:display (when @hide? "none")}
-                    :pointer-events (when disable-handlers "none")}
+      [:g.controls {:pointer-events (when disable-handlers "none")}
 
        ;; Selection rect
        [:& selection-rect {:rect selrect

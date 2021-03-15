@@ -18,7 +18,10 @@
 
 ;; --- Point Impl
 
-(defrecord Point [x y])
+(defrecord Point [x y]
+  Object
+  (toString [_]
+    (str "(" x "," y ")")))
 
 (defn s [{:keys [x y]}] (str "(" x "," y ")"))
 

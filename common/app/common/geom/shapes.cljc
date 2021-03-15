@@ -10,12 +10,14 @@
 (ns app.common.geom.shapes
   (:require
    [app.common.data :as d]
+   [app.common.math :as mth]
    [app.common.geom.matrix :as gmt]
    [app.common.geom.point :as gpt]
    [app.common.geom.shapes.common :as gco]
    [app.common.geom.shapes.path :as gsp]
    [app.common.geom.shapes.rect :as gpr]
    [app.common.geom.shapes.transforms :as gtr]
+   [app.common.geom.shapes.intersect :as gin]
    [app.common.spec :as us]))
 
 ;; --- Relative Movement
@@ -156,7 +158,7 @@
 
 ;; --- Helpers
 
-(defn contained-in?
+#_(defn contained-in?
   "Check if a shape is contained in the
   provided selection rect."
   [shape selrect]
@@ -167,18 +169,6 @@
          (pos? (- sy2 ry2))
          (pos? (- sx2 rx2)))))
 
-;; TODO: This not will work for rotated shapes
-(defn overlaps?
-  "Check if a shape overlaps with provided selection rect."
-  [shape rect]
-  (let [{sx1 :x1 sx2 :x2 sy1 :y1 sy2 :y2} (gpr/rect->selrect rect)
-        {rx1 :x1 rx2 :x2 ry1 :y1 ry2 :y2} (gpr/points->selrect (:points shape))]
-
-    (and (< rx1 sx2)
-         (> rx2 sx1)
-         (< ry1 sy2)
-         (> ry2 sy1))))
-
 (defn fully-contained?
   "Checks if one rect is fully inside the other"
   [rect other]
@@ -187,7 +177,7 @@
        (<= (:y1 rect) (:y1 other))
        (>= (:y2 rect) (:y2 other))))
 
-(defn has-point?
+#_(defn has-point?
   [shape position]
   (let [{:keys [x y]} position
         selrect {:x1 (- x 5)
@@ -260,6 +250,12 @@
     {:rotation angle
      :displacement displacement}))
 
+(defn clip-points [bounds points]
+  (let [clip-point (fn [{:keys [x y]}]
+                     (gpt/point (mth/clamp x (:x1 bounds) (:x2 bounds))
+                                (mth/clamp y (:y1 bounds) (:y2 bounds))))]
+    (->> points
+         (map clip-point))))
 
 ;; EXPORTS
 (d/export gco/center-shape)
@@ -273,6 +269,8 @@
 (d/export gpr/points->selrect)
 (d/export gpr/points->rect)
 (d/export gpr/center->rect)
+(d/export gpr/join-selrects)
+(d/export gpr/intersect-selrects)
 
 (d/export gtr/transform-shape)
 (d/export gtr/transform-matrix)
@@ -287,3 +285,7 @@
 (d/export gsp/content->points)
 (d/export gsp/content->selrect)
 (d/export gsp/transform-content)
+
+;; Intersection
+(d/export gin/overlaps?)
+(d/export gin/has-point?)

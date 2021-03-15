@@ -7,7 +7,7 @@
 ;;
 ;; Copyright (c) 2020 UXBOX Labs SL
 
-(ns app.main.ui.workspace.snap-distances
+(ns app.main.ui.workspace.viewport.snap-distances
   (:require
    [app.common.data :as d]
    [app.common.geom.point :as gpt]
