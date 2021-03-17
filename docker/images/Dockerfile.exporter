@@ -67,13 +67,13 @@ RUN set -eux; \
     ARCH="$(dpkg --print-architecture)"; \
     case "${ARCH}" in \
        aarch64|arm64) \
-         BINARY_URL='https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-linux-arm64.tar.xz'; \
+         BINARY_URL='https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-arm64.tar.xz'; \
          ;; \
        armhf|armv7l) \
-         BINARY_URL='https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-linux-armv7l.tar.xz'; \
+         BINARY_URL='https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-armv7l.tar.xz'; \
          ;; \
        amd64|x86_64) \
-         BINARY_URL='https://nodejs.org/dist/$NODE_VERSION/node-$NODE_VERSION-linux-x64.tar.xz'; \
+         BINARY_URL='https://nodejs.org/dist/${NODE_VERSION}/node-${NODE_VERSION}-linux-x64.tar.xz'; \
          ;; \
        *) \
          echo "Unsupported arch: ${ARCH}"; \
