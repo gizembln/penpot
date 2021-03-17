@@ -14,7 +14,7 @@ for item in $(echo $CLASSPATH | tr ":" "\n"); do
     fi
 done
 
-cp ./resources/log4j2-bundle.xml ./target/dist/log4j2.xml
+cp ./resources/log4j2.xml ./target/dist/log4j2.xml
 cp -r ./src ./target/dist/main
 cp -r ./resources/emails ./target/dist/main/
 cp -r ./resources/svgclean.js ./target/dist/main/
@@ -74,4 +74,3 @@ EOF
 
 chmod +x ./target/dist/run.sh
 chmod +x ./target/dist/manage.sh
-
