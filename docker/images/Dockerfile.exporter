@@ -92,6 +92,14 @@ WORKDIR /opt/app
 
 ADD ./bundle-exporter/ /opt/app/
 
+RUN set -ex; \
+    apt-get -qq update; \
+    apt-get -qqy install \
+        chromium \
+        chromium-browser \
+    ; \
+    rm -rf /var/lib/apt/lists/*;
+
 RUN set -ex; yarn install;
 
 CMD ["/usr/local/nodejs/bin/node", "app.js"]
